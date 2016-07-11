@@ -1,0 +1,14 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+
+{% if login_state %}
+<ul>
+    <li><a href="{% url 'trade:basic_info' '039490' %}">BasicInfo</a></li>
+    <li><a href="{% url 'trade:chart' '039490' %}">Chart</a></li>
+    <li><a href="{% url 'trade:index' %}?logout=true">Logout</a></li>
+</ul>
+{% else %}
+<ul>
+    <li><a href="{% url 'trade:index' %}?login=true">Login</a></li>
+</ul>
+{% endif %}
