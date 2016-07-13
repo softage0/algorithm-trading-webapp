@@ -24,7 +24,7 @@ $ pip install -r requirement
 ```
 $ python manage.py runserver
 ```
-1. You can access by the following URL:
+2. You can access by the following URL:
 http://127.0.0.1:8000/
 
 
