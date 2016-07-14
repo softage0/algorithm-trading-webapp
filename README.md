@@ -11,8 +11,9 @@ Algorithm Trading web application project with Python, Django, PyQt5 and Javascr
 
 ## Setup Instructions
 
-1. Clone the repo: `https://github.com/softage0/algorithm-trading-webapp.git`.
-1. Run the following code on the cloned repo:
+Clone the repo: `https://github.com/softage0/algorithm-trading-webapp.git`
+
+Run the following code on the cloned repo:
 ```
 $ pip install -r requirement
 ```
@@ -20,12 +21,19 @@ $ pip install -r requirement
 
 ## Quick Start
 
-1. Run dev server
+Run dev server:
 ```
 $ python manage.py runserver
 ```
-2. You can access by the following URL:
+
+Then you can access by the following URL:
 http://127.0.0.1:8000/
+
+
+## References
+* https://wikidocs.net/book/110
+* https://wikidocs.net/2872
+* https://github.com/sculove/QWebview-plus
 
 
 ## License
