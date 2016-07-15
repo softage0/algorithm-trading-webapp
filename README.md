@@ -30,11 +30,35 @@ Then you can access by the following URL:
 http://127.0.0.1:8000/
 
 
+## Setup Zipline (optional)
+
+*The following is the installation steps for Windows platform. The installations on the other platforms may be different.*
+
+[Zipline](http://www.zipline.io/) is a Pythonic algorithmic trading library. It is an event-driven system that supports both backtesting and live-trading.
+
+
+Install the following build tools first:
+
+* [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools)
+
+Download the following packages from [Gohlke's repository](http://www.lfd.uci.edu/~gohlke/pythonlibs/):
+
+* numpy-1.11.1+mkl-cp35-cp35m-win32.whl
+* scipy-0.17.1-cp35-cp35m-win32.whl
+* numexpr-2.6.0-cp35-cp35m-win32.whl
+
+And install them:
+```
+$ pip install {filename} 
+```
+
+Install Zipline:
+```
+$ pip install zipline 
+```
+
+
 ## References
 * https://wikidocs.net/book/110
 * https://wikidocs.net/2872
 * https://github.com/sculove/QWebview-plus
-
-
-## License
-https://opensource.org/licenses/MIT
