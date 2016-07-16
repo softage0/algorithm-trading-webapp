@@ -31,5 +31,5 @@ def chart(request, code):
     k_module.set_input_value("수정주가구분 ", 0)
     k_module.comm_rq_data("주식일봉차트조회요청", "opt10081", 0, "0002")
     data = k_q.get()
-    print(k_module.get_comm_data_ex(data['trCode'], data['rQName']))
+    print(k_module.get_comm_data_ex(data['trCode'], data['sRQName']))
     return render(request, 'trade/chart.html')
