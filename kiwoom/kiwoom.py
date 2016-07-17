@@ -153,9 +153,17 @@ class Kiwoom():
         """
         self.ocx.dynamicCall("DisconnectRealData(QString)", sScnNo)
 
-    # 수신 받은 데이터의 반복 개수를 반환한다.
-    def get_repeat_cnt(self, trCode, recordName):
-        return self.ocx.dynamicCall("GetRepeatCnt(QString, QString)", trCode, recordName)
+    def get_repeat_cnt(self, sTrCode, sRecordName):
+        """
+        수신 받은 데이터의 반복 개수를 반환한다.
+        레코드 반복횟수를 반환한다.
+
+        :param sTrCode: Tran 명
+        :param sRecordName: 레코드 명
+        Ex) openApi.GetRepeatCnt(“OPT00001”, “주식기본정보”);
+        :return: 레코드의 반복횟수
+        """
+        return self.ocx.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRecordName)
 
     # 복수종목조회 Tran을 서버로 송신한다.
     # OP_ERR_RQ_STRING – 요청 전문 작성 실패
