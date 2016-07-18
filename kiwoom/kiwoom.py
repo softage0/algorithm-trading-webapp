@@ -165,15 +165,22 @@ class Kiwoom():
         """
         return self.ocx.dynamicCall("GetRepeatCnt(QString, QString)", sTrCode, sRecordName)
 
-    # 복수종목조회 Tran을 서버로 송신한다.
-    # OP_ERR_RQ_STRING – 요청 전문 작성 실패
-    # OP_ERR_NONE - 정상처리
-    #
-    # sArrCode – 종목간 구분은 ‘;’이다.
-    # nTypeFlag – 0:주식관심종목정보, 3:선물옵션관심종목정보
-    def comm_kw_rq_data(self, arrCode, next, codeCount, typeFlag, sRQName, sScreenNo):
-        self.ocx.dynamicCall("CommKwRqData(QString, QBoolean, int, int, QString, QString)", arrCode, next, codeCount,
-                             typeFlag, sRQName, sScreenNo)
+    def comm_kw_rq_data(self, sArrCode, bNext, nCodeCount, nTypeFlag, sRQName, sScreenNo):
+        """
+        복수종목조회 Tran을 서버로 송신한다.
+
+        :param sArrCode: 종목리스트 - 종목간 구분은 ‘;’이다.
+        :param bNext: 연속조회요청
+        :param nCodeCount: 종목개수
+        :param nTypeFlag: 조회구분 - 0:주식관심종목정보, 3:선물옵션관심종목정보
+        :param sRQName: 사용자구분 명
+        :param sScreenNo: 화면번호[4]
+        ex) openApi.CommKwRqData(“000660;005930”, 0, 2, 0, “RQ_1”, “0101”);
+        :return: OP_ERR_RQ_STRING – 요청 전문 작성 실패
+            OP_ERR_NONE - 정상처리
+        """
+        self.ocx.dynamicCall("CommKwRqData(QString, QBoolean, int, int, QString, QString)", sArrCode, bNext, nCodeCount,
+                             nTypeFlag, sRQName, sScreenNo)
 
     def get_api_module_path(self):
         pass
