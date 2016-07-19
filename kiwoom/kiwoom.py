@@ -188,16 +188,23 @@ class Kiwoom():
     def get_code_list_by_market(self):
         pass
 
-    # 로그인 상태 확인
-    # 0:미연결, 1:연결완료, 그외는 에러
     def get_connect_state(self):
+        """
+        현재접속상태를 반환한다.
+
+        :return: 접속상태 - 0:미연결, 1:연결완료
+        """
         return self.ocx.dynamicCall("GetConnectState()")
 
-    # 종목코드의 한글명을 반환한다.
-    # strCode – 종목코드
-    # 종목한글명
-    def get_master_code_name(self, code):
-        return self.ocx.dynamicCall("GetMasterCodeName(QString)", code)
+    def get_master_code_name(self, strCode):
+        """
+        종목코드의 한글명을 반환한다.
+        장내외, 지수선옵, 주식선옵 검색 가능.
+
+        :param strCode: 종목코드
+        :return: 종목한글명
+        """
+        return self.ocx.dynamicCall("GetMasterCodeName(QString)", strCode)
 
     def get_master_listed_stock_cnt(self):
         pass
@@ -223,79 +230,138 @@ class Kiwoom():
     def get_comm_data(self):
         pass
 
-    # strRealType – 실시간 구분
-    # nFid – 실시간 아이템
-    # Ex) 현재가출력 - openApi.GetCommRealData(“주식시세”, 10);
-    # 참고)실시간 현재가는 주식시세, 주식체결 등 다른 실시간타입(RealType)으로도 수신가능
-    def get_comm_real_data(self, realType, fid):
-        return self.ocx.dynamicCall("GetCommRealData(QString, int)", realType, fid).strip()
+    def get_comm_real_data(self, strRealType, nFid):
+        """
+        실시간데이터를 반환한다.
+        참고)실시간 현재가는 주식시세, 주식체결 등 다른 실시간타입(RealType)으로도 수신가능
 
-    # 체결잔고 데이터를 반환한다.
-    def get_chejan_data(self, fid):
-        return self.ocx.dynamicCall("GetChejanData(int)", fid)
+        :param strRealType: 실시간 구분
+        :param nFid: 실시간 아이템
+        Ex) 현재가출력 - openApi.GetCommRealData(“주식시세”, 10);
 
-    # 실시간 등록을 한다.
-    # strScreenNo : 화면번호
-    # strCodeList : 종목코드리스트(ex: 039490;005930;…)
-    # strFidList : FID번호(ex:9001;10;13;…)
-    # 	9001 – 종목코드
-    # 	10 - 현재가
-    # 	13 - 누적거래량
-    # strOptType : 타입(“0”, “1”)
-    # 타입 “0”은 항상 마지막에 등록한 종목들만 실시간등록이 됩니다.
-    # 타입 “1”은 이전에 실시간 등록한 종목들과 함께 실시간을 받고 싶은 종목을 추가로 등록할 때 사용합니다.
-    # ※ 종목, FID는 각각 한번에 실시간 등록 할 수 있는 개수는 100개 입니다.
-    def set_real_reg(self, sScreenNo, codeList, fidList, optType):
-        return self.ocx.dynamicCall("SetRealReg(QString, QString, QString, QString)", sScreenNo, codeList, fidList,
-                                    optType)
+        :return: 수신 데이터
+        """
+        return self.ocx.dynamicCall("GetCommRealData(QString, int)", strRealType, nFid).strip()
 
-    # 종목별 실시간 해제
-    # strScrNo : 화면번호
-    # strDelCode : 실시간 해제할 종목코드
-    # -화면별 실시간해제
-    # 여러 화면번호로 걸린 실시간을 해제하려면 파라메터의 화면번호와 종목코드에 “ALL”로 입력하여 호출하시면 됩니다.
-    # SetRealRemove(“ALL”, “ALL”);
-    # 개별화면별로 실시간 해제 하시려면 파라메터에서 화면번호는 실시간해제할
-    # 화면번호와 종목코드에는 “ALL”로 해주시면 됩니다.
-    # SetRealRemove(“0001”, “ALL”);
-    # -화면의 종목별 실시간해제
-    # 화면의 종목별로 실시간 해제하려면 파라메터에 해당화면번호와 해제할
-    # 종목코드를 입력하시면 됩니다.
-    # SetRealRemove(“0001”, “039490”);
-    def set_real_remove(self, scrNo, delCode):
-        self.ocx.dynamicCall("SetRealRemove(QString, QString)", scrNo, delCode)
+    def get_chejan_data(self, nFid):
+        """
+        체결잔고 데이터를 반환한다.
 
-    # 서버에 저장된 사용자 조건식을 가져온다.
+        :param nFid: 체결잔고 아이템
+        Ex) 현재가출력 – openApi.GetChejanData(10);
+        :return: 수신 데이터
+        """
+        return self.ocx.dynamicCall("GetChejanData(int)", nFid)
+
+    def set_real_reg(self, strScreenNo, strCodeList, strFidList, strRealType):
+        """
+        실시간 등록을 한다.
+        ※ 종목, FID는 각각 한번에 실시간 등록 할 수 있는 개수는 100개 입니다.
+
+        :param strScreenNo: 실시간 등록할 화면 번호
+        :param strCodeList: 실시간 등록할 종목코드(복수종목가능 – “종목1;종목2;종목3;....”)
+        :param strFidList: 실시간 등록할 FID(“FID1;FID2;FID3;.....”)
+            ex)9001;10;13;…
+            9001 – 종목코드
+            10 - 현재가
+            13 - 누적거래량
+        :param strRealType: "0", "1" 타입
+            strRealType이 “0” 으로 하면 같은화면에서 다른종목 코드로 실시간 등록을 하게 되면
+            마지막에 사용한 종목코드만 실시간 등록이 되고 기존에 있던 종목은 실시간이 자동 해지됨.
+            “1”로 하면 같은화면에서 다른 종목들을 추가하게 되면 기존에 등록한 종목도 함께 실 시간 시세를 받을 수 있음.
+            꼭 같은 화면이여야 하고 최초 실시간 등록은 “0”으로 하고 이후부터 “1”로 등록해야 함.
+        :return: 통신결과
+        """
+        return self.ocx.dynamicCall("SetRealReg(QString, QString, QString, QString)", strScreenNo, strCodeList, strFidList,
+                                    strRealType)
+
+    def set_real_remove(self, strScrNo, strDelCode):
+        """
+        종목별 실시간 해제.
+        SetRealReg() 함수로 실시간 등록한 종목만 실시간 해제 할 수 있다.
+
+        -화면별 실시간해제
+            여러 화면번호로 걸린 실시간을 해제하려면 파라메터의 화면번호와 종목코드에 “ALL”로 입력하여 호출하시면 됩니다.
+            SetRealRemove(“ALL”, “ALL”);
+            개별화면별로 실시간 해제 하시려면 파라메터에서 화면번호는 실시간해제할
+            화면번호와 종목코드에는 “ALL”로 해주시면 됩니다.
+            SetRealRemove(“0001”, “ALL”);
+            -화면의 종목별 실시간해제
+            화면의 종목별로 실시간 해제하려면 파라메터에 해당화면번호와 해제할
+            종목코드를 입력하시면 됩니다.
+            SetRealRemove(“0001”, “039490”);
+
+        :param strScrNo: 실시간 해제할 화면 번호
+        :param strDelCode: 실시간 해제할 종목.
+        :return: 통신결과
+        """
+        self.ocx.dynamicCall("SetRealRemove(QString, QString)", strScrNo, strDelCode)
+
     def get_condition_load(self):
+        """
+        서버에 저장된 사용자 조건식을 조회해서 임시로 파일에 저장.
+
+        System 폴더에 아이디_NewSaveIndex.dat파일로 저장된다. Ocx가 종료되면 삭제시킨다.
+        조건검색 사용시 이 함수를 최소 한번은 호출해야 조건검색을 할 수 있다.
+        영웅문에서 사용자 조건을 수정 및 추가하였을 경우에도 최신의 사용자 조건을 받고 싶으면 다시 조회해야한다.
+
+        :return: 사용자 조건식을 파일로 임시 저장.
+        """
         return self.ocx.dynamicCall("GetConditionLoad()")
 
-    # 조건검색 조건명 리스트를 받아온다.
-    # 조건명 리스트(인덱스^조건명)
-    # 조건명 리스트를 구분(“;”)하여 받아온다
     def get_condition_name_list(self):
+        """
+        조건검색 조건명 리스트를 받아온다.
+        조건명 리스트를 구분(“;”)하여 받아온다. Ex) 인덱스1^조건명1;인덱스2^조건명2;인덱스3^조건명3;...
+
+        :return: 조건명 리스트(인덱스^조건명)
+        """
         return self.ocx.dynamicCall("GetConditionNameList()")
 
-    # 조건검색 종목조회TR송신한다.
-    # LPCTSTR strScrNo : 화면번호
-    # LPCTSTR strConditionName : 조건명
-    # int nIndex : 조건명인덱스
-    # int nSearch : 조회구분(0:일반조회, 1:실시간조회, 2:연속조회)
-    # 1:실시간조회의 화면 개수의 최대는 10개
-    def send_condition(self, scrNo, conditionName, index, search):
-        self.ocx.dynamicCall("SendCondition(QString,QString, int, int)", scrNo, conditionName, index, search)
+    def send_condition(self, strScrNo, strConditionName, nIndex, nSearch):
+        """
+        조건검색 종목조회 TR송신한다.
 
-    # 실시간 조건검색을 중지합니다.
-    # ※ 화면당 실시간 조건검색은 최대 10개로 제한되어 있어서 더 이상 실시간 조건검색을 원하지 않는 조건은 중지해야만 카운트 되지 않습니다.
-    def send_condition_stop(self, scrNo, conditionName, index):
-        self.ocx.dynamicCall("SendConditionStop(QString, QString, int)", scrNo, conditionName, index)
+        :param strScrNo: 화면번호
+        :param strConditionName: 조건명
+        :param nIndex: 조건명인덱스
+        :param nSearch: 조회구분(0:일반조회, 1:실시간조회, 2:연속조회) - 1:실시간조회의 화면 개수의 최대는 10개
+            단순 조건식에 맞는 종목을 조회하기 위해서는 조회구분을 0으로 하고,
+            실시간 조건검색을 하기 위해서는 조회구분을 1로 한다.
+            OnReceiveTrCondition으로 결과값이 온다.
+            연속조회가 필요한 경우에는 응답받는 곳에서 연속조회 여부에 따라 연속조회를 송신하면 된다.
+        :return:
+        """
+        self.ocx.dynamicCall("SendCondition(QString,QString, int, int)", strScrNo, strConditionName, nIndex, nSearch)
 
-    # 차트 조회한 데이터 전부를 배열로 받아온다.
-    # LPCTSTR strTrCode : 조회한TR코드
-    # LPCTSTR strRecordName: 조회한 TR명
-    # ※항목의 위치는 KOA Studio의 TR목록 순서로 데이터를 가져옵니다.
-    # 예로 OPT10080을 살펴보면 OUTPUT의 멀티데이터의 항목처럼 현재가, 거래량, 체결시간등 순으로 항목의 위치가 0부터 1씩 증가합니다.
-    def get_comm_data_ex(self, trCode, recordName):
-        return json.dumps(self.ocx.dynamicCall("GetCommDataEx(QString, QString)", trCode, recordName))
+    def send_condition_stop(self, strScrNo, strConditionName, nIndex):
+        """
+        조건검색 실시간 중지TR을 송신한다.
+        해당 조건명의 실시간 조건검색을 중지하거나, 다른 조건명으로 바꿀 때 이전 조건명으로 실시간 조건검색을 반드시 중지해야한다.
+        화면 종료시에도 실시간 조건검색을 한 조건명으로 전부 중지해줘야 한다.
+        ※ 화면당 실시간 조건검색은 최대 10개로 제한되어 있어서 더 이상 실시간 조건검색을 원하지 않는 조건은 중지해야만 카운트 되지 않습니다.
+
+        :param strScrNo: 화면번호
+        :param strConditionName: 조건명
+        :param nIndex: 조건명인덱스
+        :return:
+        """
+        self.ocx.dynamicCall("SendConditionStop(QString, QString, int)", strScrNo, strConditionName, nIndex)
+
+    def get_comm_data_ex(self, strTrCode, strRecordName):
+        """
+        차트 조회 데이터를 배열로 받아온다.
+
+        ※ 항목의 위치는 KOA Studio의 TR목록 순서로 데이터를 가져옵니다.
+        예로 OPT10080을 살펴보면 OUTPUT의 멀티데이터의 항목처럼 현재가, 거래량, 체결시간등 순으로 항목의 위치가 0부터 1씩 증가합니다.
+
+        :param strTrCode: 조회한 TR코드
+        :param strRecordName: 조회한 TR명
+        :return:
+            조회 데이터가 많은 차트 경우 GetCommData()로 항목당 하나씩 받아오는 것 보다
+            한번에 데이터 전부를 받아서 사용자가 처리할 수 있도록 배열로 받는다.
+        """
+        return json.dumps(self.ocx.dynamicCall("GetCommDataEx(QString, QString)", strTrCode, strRecordName))
 
     ####################################################
     # Control Event Handlers
