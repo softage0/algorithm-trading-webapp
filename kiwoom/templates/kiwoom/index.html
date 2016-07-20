@@ -1,0 +1,12 @@
+{% extends "common/index.html" %}
+
+{% block head %}
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'kiwoom/styles.css' %}" />
+{% endblock %}
+
+{% block body %}
+    {% include "kiwoom/header.html" %}
+    {% block content %}
+    {% endblock %}
+{% endblock %}

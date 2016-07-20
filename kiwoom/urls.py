@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from . import views
 
-app_name = 'trade'
+app_name = 'kiwoom'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^basic_info/(?P<code>[0-9]+)$', views.basic_info, name='basic_info'),
