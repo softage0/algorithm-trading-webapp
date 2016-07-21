@@ -12,11 +12,14 @@ def index(request):
     if request.GET.get('login') and not k_module.get_connect_state():
         k_module.comm_connect()
         k_q.get()  # waiting for login
-        messages.success(request, 'Login Succeeded')
-        HttpResponseRedirect(reverse('kiwoom:index'))
+        if k_module.get_connect_state():
+            messages.success(request, 'Login Succeeded')
+        else:
+            messages.error(request, 'Login Failed')
+        return HttpResponseRedirect(reverse('kiwoom:index'))
     elif request.GET.get('logout') and k_module.get_connect_state():
-        k_module.comm_terminate()
-        HttpResponseRedirect(reverse('kiwoom:index'))
+        # Logout function does not exist.
+        pass
 
     return render(request, 'kiwoom/home.html', {'login_state': k_module.get_connect_state()})
 

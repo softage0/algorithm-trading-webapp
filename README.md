@@ -7,7 +7,7 @@ Algorithm Trading web application project with Python, Django, PyQt5 and Javascr
 
 * Windows 7/10
 * [Python 3.5.2+](https://www.python.org/)
-
+* [Kiwoom Open API+ module and Kiwoom Flash(번개)](https://www2.kiwoom.com/nkw.templateFrameSet.do?m=m1408000000)
 
 ## Setup Instructions
 
