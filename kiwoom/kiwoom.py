@@ -4,6 +4,7 @@ import atexit
 import json
 import threading
 import queue
+import asyncio
 
 from PyQt5.QAxContainer import QAxWidget
 from PyQt5.QtWidgets import QApplication
@@ -495,14 +496,23 @@ class KThread(threading.Thread):
     Launch QT module as thread since QApplication.exec_ entering the event loop
     """
 
-    def __init__(self, k_queue):
+    def __init__(self, q):
         super(KThread, self).__init__()
-        self.k_queue = k_queue
+        self.q = q
 
     def run(self):
         app = QApplication(sys.argv)
-        self.k_queue.put(Kiwoom(self.k_queue))
+        self.q.put(Kiwoom(self.q))
         app.exec_()
+
+    def get_all_queues(self):
+        qs = []
+        try:
+            while True:
+                q = self.q.get(True, 5)
+                qs.append(q)
+        except queue.Empty:
+            return qs
 
 
 k_q = queue.Queue()
