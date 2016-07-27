@@ -1,0 +1,30 @@
+{% extends "kiwoom/index.html" %}
+
+{% block content %}
+<table class="table table-striped table-hover">
+    <tr>
+        <td>Account Count</td>
+        <td>{{account_count}}</td>
+    </tr>
+    <tr>
+        <td>Account No.</td>
+        <td>{{account_no}}</td>
+    </tr>
+    <tr>
+        <td>User ID</td>
+        <td>{{user_id}}</td>
+    </tr>
+    <tr>
+        <td>Name</td>
+        <td>{{user_name}}</td>
+    </tr>
+    <tr>
+        <td>Key Input Security</td>
+        <td>{{key_input_security}}</td>
+    </tr>
+    <tr>
+        <td>Firewall</td>
+        <td>{{firewall}}</td>
+    </tr>
+</table>
+{% endblock %}

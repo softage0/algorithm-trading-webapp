@@ -1,17 +1,5 @@
 {% extends "kiwoom/index.html" %}
 
 {% block content %}
-<div class="container-fluid">
-    {% if login_state %}
-    <ul>
-        <li><a href="{% url 'kiwoom:basic_info' '039490' %}">BasicInfo</a></li>
-        <li><a href="{% url 'kiwoom:chart' '039490' %}">Chart</a></li>
-        <li><a href="{% url 'kiwoom:index' %}?logout=true">Logout</a></li>
-    </ul>
-    {% else %}
-    <ul>
-        <li><a href="{% url 'kiwoom:index' %}?login=true">Login</a></li>
-    </ul>
-    {% endif %}
-</div>
+    Please choose the menu on the header bar.
 {% endblock %}

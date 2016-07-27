@@ -12,6 +12,8 @@ from PyQt5.QtWidgets import QApplication
 class Kiwoom():
     def __init__(self, k_queue):
         super().__init__()
+        self.S_SCREEN_NO = "0001"
+
         self.q = k_queue
         self.qs = {
             'OnReceiveTrData': queue.Queue(),
@@ -32,7 +34,6 @@ class Kiwoom():
         self.ocx.OnReceiveRealCondition[str, str, str, str].connect(self.OnReceiveRealCondition)
         self.ocx.OnReceiveTrCondition[str, str, str, int, int].connect(self.OnReceiveTrCondition)
         self.ocx.OnReceiveConditionVer[int, str].connect(self.OnReceiveConditionVer)
-
         atexit.register(self.quit)
 
     ####################################################
@@ -520,10 +521,10 @@ class Kiwoom():
     ####################################################
     # Custom Methods
     ####################################################
-    @staticmethod
-    def quit():
+    def quit(self):
         """ Quit the server """
 
+        self.disconnect_real_data(self.S_SCREEN_NO)
         QApplication.quit()
 
     @staticmethod

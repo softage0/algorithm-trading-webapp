@@ -5,6 +5,7 @@ from . import views
 app_name = 'kiwoom'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^account_info/$', views.account_info, name='account_info'),
     url(r'^basic_info/(?P<code>[0-9]+)$', views.basic_info, name='basic_info'),
     url(r'^chart/(?P<code>[0-9]+)$', views.chart, name='chart'),
 ]
