@@ -4,7 +4,6 @@ import atexit
 import json
 import threading
 import queue
-import asyncio
 
 from PyQt5.QAxContainer import QAxWidget
 from PyQt5.QtWidgets import QApplication
@@ -14,15 +13,25 @@ class Kiwoom():
     def __init__(self, k_queue):
         super().__init__()
         self.q = k_queue
+        self.qs = {
+            'OnReceiveTrData': queue.Queue(),
+            'OnReceiveRealData': queue.Queue(),
+            'OnReceiveMsg': queue.Queue(),
+            'OnReceiveChejanData': queue.Queue(),
+            'OnEventConnect': queue.Queue(),
+            'OnReceiveRealCondition': queue.Queue(),
+            'OnReceiveTrCondition': queue.Queue(),
+            'OnReceiveConditionVer': queue.Queue()
+        }
         self.ocx = QAxWidget("KHOPENAPI.KHOpenAPICtrl.1")
-        self.ocx.OnReceiveTrData[str, str, str, str, str, int, str, str, str].connect(self._OnReceiveTrData)
-        self.ocx.OnReceiveRealData[str, str, str].connect(self._OnReceiveRealData)
-        self.ocx.OnReceiveMsg[str, str, str, str].connect(self._OnReceiveMsg)
-        self.ocx.OnReceiveChejanData[str, int, str].connect(self._OnReceiveChejanData)
-        self.ocx.OnEventConnect[int].connect(self._OnEventConnect)
-        self.ocx.OnReceiveRealCondition[str, str, str, str].connect(self._OnReceiveRealCondition)
-        self.ocx.OnReceiveTrCondition[str, str, str, int, int].connect(self._OnReceiveTrCondition)
-        self.ocx.OnReceiveConditionVer[int, str].connect(self._OnReceiveConditionVer)
+        self.ocx.OnReceiveTrData[str, str, str, str, str, int, str, str, str].connect(self.OnReceiveTrData)
+        self.ocx.OnReceiveRealData[str, str, str].connect(self.OnReceiveRealData)
+        self.ocx.OnReceiveMsg[str, str, str, str].connect(self.OnReceiveMsg)
+        self.ocx.OnReceiveChejanData[str, int, str].connect(self.OnReceiveChejanData)
+        self.ocx.OnEventConnect[int].connect(self.OnEventConnect)
+        self.ocx.OnReceiveRealCondition[str, str, str, str].connect(self.OnReceiveRealCondition)
+        self.ocx.OnReceiveTrCondition[str, str, str, int, int].connect(self.OnReceiveTrCondition)
+        self.ocx.OnReceiveConditionVer[int, str].connect(self.OnReceiveConditionVer)
 
         atexit.register(self.quit)
 
@@ -367,91 +376,146 @@ class Kiwoom():
     ####################################################
     # Control Event Handlers
     ####################################################
+    def OnReceiveTrData(self, sScrNo, sRQName, sTrCode, sRecordName, sPreNext, nDataLength, sErrorCode, sMessage, sSplmMsg):
+        """
+        Tran 수신시 이벤트
+        서버통신 후 데이터를 받은 시점을 알려준다.
 
-    # Tran 수신시 이벤트
-    def _OnReceiveTrData(self, scrNo, sRQName, trCode, recordName, prevNext, dataLength, errorCode, message, splmMsg):
-        # nDataLength – 1.0.0.1 버전 이후 사용하지 않음.
-        # sErrorCode – 1.0.0.1 버전 이후 사용하지 않음.
-        # sMessage – 1.0.0.1 버전 이후 사용하지 않음.
-        # sSplmMsg - 1.0.0.1 버전 이후 사용하지 않음.
-        self.q.put({
-            "scrNo": scrNo,
+        :param sScrNo: 화면번호
+        :param sRQName: 사용자구분 명
+        :param sTrCode: Tran 명
+        :param sRecordName: Record 명
+        :param sPreNext: 연속조회 유무
+        :param nDataLength: 1.0.0.1 버전 이후 사용하지 않음.
+        :param sErrorCode: 1.0.0.1 버전 이후 사용하지 않음.
+        :param sMessage: 1.0.0.1 버전 이후 사용하지 않음.
+        :param sSplmMsg: 1.0.0.1 버전 이후 사용하지 않음.
+        """
+        self.qs['OnReceiveTrData'].put({
+            "sScrNo": sScrNo,
             "sRQName": sRQName,
-            "trCode": trCode,
-            "recordName": recordName,
-            "prevNext": prevNext
-            # "dataLength": dataLength,
-            # "errorCode" : errorCode,
-            # "message" : message,
-            # "splmMsg" : splmMsg
+            "sTrCode": sTrCode,
+            "sRecordName": sRecordName,
+            "sPreNext": sPreNext
+        })
+        print("OnReceiveTrData received")
+
+    def OnReceiveRealData(self, sJongmokCode, sRealType, sRealData):
+        """
+        실시간 시세 이벤트
+        실시간데이터를 받은 시점을 알려준다.
+
+        :param sJongmokCode: 종목코드
+        :param sRealType: 리얼타입
+        :param sRealData: 실시간 데이터전문
+        """
+        # self.qs['OnReceiveRealData'].put({
+        #     "sJongmokCode": sJongmokCode,
+        #     "sRealType": sRealType,
+        #     "sRealData": sRealData
+        # })
+        print("OnReceiveRealData received: ")
+        print({
+            "sJongmokCode": sJongmokCode,
+            "sRealType": sRealType,
+            "sRealData": sRealData
         })
 
-    # 실시간 시세 이벤트
-    def _OnReceiveRealData(self, jongmokCode, realType, realData):
-        self.q.put({
-            "jongmokCode": jongmokCode,
-            "realType": realType,
-            "realData": realData
-        })
+    def OnReceiveMsg(self, sScrNo, sRQName, sTrCode, sMsg):
+        """
+        수신 메시지 이벤트
+        서버통신 후 메시지를 받은 시점을 알려준다.
 
-    # 수신 메시지 이벤트
-    def _OnReceiveMsg(self, scrNo, sRQName, trCode, msg):
-        self.q.put("receiveMsg.kiwoom", {
-            "scrNo": scrNo,
+        :param sScrNo: 화면번호
+        :param sRQName: 사용자구분 명
+        :param sTrCode: Tran 명
+        :param sMsg: 서버메시지
+        """
+        self.qs['OnReceiveMsg'].put("receiveMsg.kiwoom", {
+            "sScrNo": sScrNo,
             "sRQName": sRQName,
-            "trCode": trCode,
-            "msg": msg
+            "sTrCode": sTrCode,
+            "sMsg": sMsg
         })
+        print("OnReceiveMsg received")
 
-    # 체결데이터를 받은 시점을 알려준다.
-    # sGubun – 0:주문체결통보, 1:잔고통보, 3:특이신호
-    # sFidList – 데이터 구분은 ‘;’ 이다.
-    def _OnReceiveChejanData(self, gubun, itemCnt, fidList):
-        self.q.put({
-            "gubun": gubun,
-            "itemCnt": itemCnt,
-            "fidList": fidList
+    def OnReceiveChejanData(self, sGubun, nItemCnt, sFidList):
+        """
+        체결데이터를 받은 시점을 알려준다.
+
+        :param sGubun: 체결구분 - 0:주문체결통보, 1:잔고통보, 3:특이신호
+        :param nItemCnt: 아이템갯수
+        :param sFidList: 데이터리스트 - 데이터 구분은 ‘;’ 이다.
+        """
+        self.qs['OnReceiveChejanData'].put({
+            "sGubun": sGubun,
+            "nItemCnt": nItemCnt,
+            "sFidList": sFidList
         })
+        print("OnReceiveChejanData received")
 
-    # 통신 연결 상태 변경시 이벤트
-    # code가 0이면 로그인 성공, 음수면 실패
-    def _OnEventConnect(self, code):
-        self.q.put(code)
+    def OnEventConnect(self, nErrCode):
+        """
+        통신 연결 상태 변경시 이벤트
 
-    # 편입, 이탈 종목이 실시간으로 들어옵니다.
-    # strCode : 종목코드
-    # strType : 편입(“I”), 이탈(“D”)
-    # strConditionName : 조건명
-    # strConditionIndex : 조건명 인덱스
-    def _OnReceiveRealCondition(self, code, type, conditionName, conditionIndex):
-        self.q.put({
-            "code": code,
-            "type": type,
-            "conditionName": conditionName,
-            "conditionIndex": conditionIndex
+        :param nErrCode: 에러 코드 - 0이면 로그인 성공, 음수면 실패, 에러코드 참조
+        """
+        self.qs['OnEventConnect'].put(nErrCode)
+        print("OnEventConnect received")
+
+    def OnReceiveRealCondition(self, strCode, strType, strConditionName, strConditionIndex):
+        """
+        조건검색 실시간 편입,이탈 종목을 받을 시점을 알려준다.
+        편입, 이탈 종목이 실시간으로 들어옵니다.
+        strConditionName에 해당하는 종목이 실시간으로 들어옴. strType으로 편입된 종목인지 이탈된 종목인지 구분한다.
+
+        :param strCode: 종목코드
+        :param strType: 편입(“I”), 이탈(“D”)
+        :param strConditionName: 조건명
+        :param strConditionIndex: 조건명 인덱스
+        """
+        self.qs['OnReceiveRealCondition'].put({
+            "strCode": strCode,
+            "strType": strType,
+            "strConditionName": strConditionName,
+            "strConditionIndex": strConditionIndex
         })
+        print("OnReceiveRealCondition received")
 
-    # 조건검색 조회응답으로 종목리스트를 구분자(“;”)로 붙어서 받는 시점.
-    # LPCTSTR sScrNo : 종목코드
-    # LPCTSTR strCodeList : 종목리스트(“;”로 구분)
-    # LPCTSTR strConditionName : 조건명
-    # int nIndex : 조건명 인덱스
-    # int nNext : 연속조회(2:연속조회, 0:연속조회없음)
-    def _OnReceiveTrCondition(self, scrNo, codeList, conditionName, index, next):
-        self.q.put({
-            "scrNo": scrNo,
-            "codeList": codeList,
-            "conditionName": conditionName,
-            "index": index,
-            "next": next,
-        })
+    def OnReceiveTrCondition(self, sScrNo, strCodeList, strConditionName, nIndex, nNext):
+        """
+        조건검색 조회응답 이벤트
+        조건검색 조회응답으로 종목리스트를 구분자(“;”)로 붙어서 받는 시점.
 
-    # 로컬에 사용자조건식 저장 성공여부 응답 이벤트
-    def _OnReceiveConditionVer(self, ret, msg):
-        self.q.put({
-            "ret": ret,
-            "msg": msg
+        :param sScrNo: 종목코드
+        :param strCodeList: 종목리스트(“;”로 구분)
+        :param strConditionName: 조건명
+        :param nIndex: 조건명 인덱스
+        :param nNext: 연속조회(2:연속조회, 0:연속조회없음)
+        :return:
+        """
+        self.qs['OnReceiveTrCondition'].put({
+            "sScrNo": sScrNo,
+            "strCodeList": strCodeList,
+            "strConditionName": strConditionName,
+            "nIndex": nIndex,
+            "nNext": nNext,
         })
+        print("OnReceiveTrCondition received")
+
+    def OnReceiveConditionVer(self, lRet, sMsg):
+        """
+        로컬에 사용자조건식 저장 성공여부 응답 이벤트
+        로컬에 사용자 조건식 저장 성공 여부를 확인하는 시점
+
+        :param lRet: 사용자 조건식 저장 성공여부 (1: 성공, 나머지 실패)
+        :param sMsg:
+        """
+        self.qs['OnReceiveConditionVer'].put({
+            "lRet": lRet,
+            "sMsg": sMsg
+        })
+        print("OnReceiveConditionVer received")
 
     ####################################################
     # Custom Methods
@@ -505,14 +569,16 @@ class KThread(threading.Thread):
         self.q.put(Kiwoom(self.q))
         app.exec_()
 
-    def get_all_queues(self):
-        qs = []
+    def get_all_queues(self, q):
+        results = []
+        if not q:
+            q = self.q
         try:
             while True:
-                q = self.q.get(True, 5)
-                qs.append(q)
+                data = q.get(True)
+                results.append(data)
         except queue.Empty:
-            return qs
+            return results
 
 
 k_q = queue.Queue()
