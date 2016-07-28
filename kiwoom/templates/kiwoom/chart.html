@@ -1,6 +1,6 @@
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'kiwoom/style.css' %}" />
+{% extends "kiwoom/index.html" %}
 
+{% block content %}
 <ul>
     <li>{{scrNo}}</li>
     <li>{{trCode}}</li>
@@ -8,3 +8,4 @@
     <li>{{prevNext}}</li>
     <li>{{recordName}}</li>
 </ul>
+{% endblock %}

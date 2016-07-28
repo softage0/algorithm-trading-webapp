@@ -21,6 +21,7 @@
             <ul class="nav navbar-nav navbar-right">
                 {% if login_state %}
                 <li><a href="{% url 'kiwoom:account_info' %}">Account Info</a></li>
+                <li><a href="{% url 'kiwoom:stock_list' %}">Stock List</a></li>
                 <li><a href="{% url 'kiwoom:basic_info' '039490' %}">Basic Info</a></li>
                 <li><a href="{% url 'kiwoom:chart' '039490' %}">Chart</a></li>
                 <li><a href="{% url 'kiwoom:index' %}?logout=true">Logout</a></li>

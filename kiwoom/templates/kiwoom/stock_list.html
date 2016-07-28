@@ -1,0 +1,9 @@
+{% extends "kiwoom/index.html" %}
+
+{% block content %}
+<ul>
+{% for code, name in market_list.items %}
+    <li><a href="{% url 'kiwoom:stock_detail_list' code %}">{{name}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

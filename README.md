@@ -7,7 +7,7 @@ Algorithm Trading web application project with Python, Django, PyQt5 and Javascr
 
 * Windows 7/10
 * [Python 3.5.2+](https://www.python.org/)
-* [Kiwoom Open API+ module and Kiwoom Flash(번개)](https://www2.kiwoom.com/nkw.templateFrameSet.do?m=m1408000000)
+* [Kiwoom Flash(번개) and Kiwoom Open API+ module](https://www2.kiwoom.com/nkw.templateFrameSet.do?m=m1408000000)
 
 ## Setup Instructions
 
@@ -15,7 +15,7 @@ Clone the repo: `https://github.com/softage0/algorithm-trading-webapp.git`
 
 Run the following code on the cloned repo:
 ```
-$ pip install -r requirement
+$ pip install -r requirements.txt
 ```
 
 
@@ -59,6 +59,5 @@ $ pip install zipline
 
 
 ## References
-* https://wikidocs.net/book/110
-* https://wikidocs.net/2872
+* 파이썬을 이용한 시스템 트레이딩 (기초편)(https://wikidocs.net/book/110)
 * https://github.com/sculove/QWebview-plus

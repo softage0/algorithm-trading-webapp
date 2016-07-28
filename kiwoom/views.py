@@ -19,7 +19,7 @@ def index(request):
         return HttpResponseRedirect(reverse('kiwoom:index'))
     elif request.GET.get('logout') and k_module.get_connect_state():
         # Logout function does not exist.
-        pass
+        return HttpResponseRedirect(reverse('kiwoom:index'))
 
     return render(request, 'kiwoom/home.html', {
         'login_state': k_module.get_connect_state()
@@ -35,6 +35,21 @@ def account_info(request):
         'user_name': k_module.get_login_info("USER_NAME"),
         'key_input_security': k_module.get_login_info("KEY_BSECGB"),
         'firewall': k_module.get_login_info("FIREW_SECGB")
+    })
+
+
+def stock_list(request):
+    return render(request, 'kiwoom/stock_list.html', {
+        'login_state': k_module.get_connect_state(),
+        'market_list': k_module.MARKET_LIST
+    })
+
+
+def stock_detail_list(request, market_type):
+    return render(request, 'kiwoom/stock_detail_list.html', {
+        'login_state': k_module.get_connect_state(),
+        'stock_code_list': k_module.get_code_list_by_market(market_type).strip(';').split(';'),
+        'k_module': k_module
     })
 
 

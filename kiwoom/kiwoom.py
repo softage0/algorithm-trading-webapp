@@ -13,6 +13,17 @@ class Kiwoom():
     def __init__(self, k_queue):
         super().__init__()
         self.S_SCREEN_NO = "0001"
+        self.MARKET_LIST = {
+            0: '장내',
+            3: 'ELW',
+            4: '뮤추얼펀드',
+            5: '신주인수권',
+            6: '리츠',
+            8: 'ETF',
+            9: '하이일드펀드',
+            10: '코스닥',
+            30: '제3시장'
+        }
 
         self.q = k_queue
         self.qs = {
@@ -190,14 +201,21 @@ class Kiwoom():
         :return: OP_ERR_RQ_STRING – 요청 전문 작성 실패
             OP_ERR_NONE - 정상처리
         """
-        self.ocx.dynamicCall("CommKwRqData(QString, QBoolean, int, int, QString, QString)", sArrCode, bNext, nCodeCount,
-                             nTypeFlag, sRQName, sScreenNo)
+        return self.ocx.dynamicCall("CommKwRqData(QString, QBoolean, int, int, QString, QString)",
+                                    sArrCode, bNext, nCodeCount, nTypeFlag, sRQName, sScreenNo)
 
     def get_api_module_path(self):
         pass
 
-    def get_code_list_by_market(self):
-        pass
+    def get_code_list_by_market(self, sMarket):
+        """
+        시장구분에 따른 종목코드를 반환한다.
+
+        :param sMarket: 시장구분
+            0:장내, 3:ELW, 4:뮤추얼펀드, 5:신주인수권, 6:리츠, 8:ETF, 9:하이일드펀드, 10:코스닥, 30:제3시장
+        :return: 종목코드 리스트, 종목간 구분은 ’;’이다.
+        """
+        return self.ocx.dynamicCall("GetCodeListByMarket(QString)", [sMarket])
 
     def get_connect_state(self):
         """
@@ -252,7 +270,7 @@ class Kiwoom():
 
         :return: 수신 데이터
         """
-        return self.ocx.dynamicCall("GetCommRealData(QString, int)", strRealType, nFid).strip()
+        return self.ocx.dynamicCall("GetCommRealData(QString, int)", strRealType, nFid)
 
     def get_chejan_data(self, nFid):
         """
@@ -306,7 +324,7 @@ class Kiwoom():
         :param strDelCode: 실시간 해제할 종목.
         :return: 통신결과
         """
-        self.ocx.dynamicCall("SetRealRemove(QString, QString)", strScrNo, strDelCode)
+        return self.ocx.dynamicCall("SetRealRemove(QString, QString)", strScrNo, strDelCode)
 
     def get_condition_load(self):
         """
@@ -341,7 +359,6 @@ class Kiwoom():
             실시간 조건검색을 하기 위해서는 조회구분을 1로 한다.
             OnReceiveTrCondition으로 결과값이 온다.
             연속조회가 필요한 경우에는 응답받는 곳에서 연속조회 여부에 따라 연속조회를 송신하면 된다.
-        :return:
         """
         self.ocx.dynamicCall("SendCondition(QString,QString, int, int)", strScrNo, strConditionName, nIndex, nSearch)
 
@@ -355,7 +372,6 @@ class Kiwoom():
         :param strScrNo: 화면번호
         :param strConditionName: 조건명
         :param nIndex: 조건명인덱스
-        :return:
         """
         self.ocx.dynamicCall("SendConditionStop(QString, QString, int)", strScrNo, strConditionName, nIndex)
 

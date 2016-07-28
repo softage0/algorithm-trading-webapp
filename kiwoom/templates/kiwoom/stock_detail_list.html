@@ -1,0 +1,21 @@
+{% extends "kiwoom/index.html" %}
+{% load kiwoom_extras %}
+
+{% block content %}
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <td>Code</td>
+        <td>Name</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for code in stock_code_list %}
+    <tr>
+        <td>{{code}}</td>
+        <td>{{code|get_master_code_name}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
