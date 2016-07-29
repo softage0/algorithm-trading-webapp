@@ -2,7 +2,7 @@ import datetime
 
 from django.contrib import messages
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from .kiwoom import k_module
@@ -24,6 +24,10 @@ def index(request):
     return render(request, 'kiwoom/home.html', {
         'login_state': k_module.get_connect_state()
     })
+
+
+def api_docs(request):
+    return HttpResponse(k_module.ocx.generateDocumentation())
 
 
 def account_info(request):

@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^stock_list/(?P<market_type>[0-9]+)$', views.stock_detail_list, name='stock_detail_list'),
     url(r'^basic_info/(?P<code>[0-9]+)$', views.basic_info, name='basic_info'),
     url(r'^chart/(?P<code>[0-9]+)$', views.chart, name='chart'),
+    url(r'^api_docs/$', views.api_docs, name='api_docs'),
 ]
