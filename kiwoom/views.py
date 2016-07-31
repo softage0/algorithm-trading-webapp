@@ -1,9 +1,11 @@
 import datetime
+import json
 
 from django.contrib import messages
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from pandas import DataFrame
 
 from .kiwoom import k_module
 
@@ -17,7 +19,7 @@ def index(request):
         else:
             messages.error(request, 'Login Failed')
         return HttpResponseRedirect(reverse('kiwoom:index'))
-    elif request.GET.get('logout') and k_module.get_connect_state():
+    elif request.GET.get('logout'):
         # Logout function does not exist.
         return HttpResponseRedirect(reverse('kiwoom:index'))
 
@@ -76,8 +78,12 @@ def chart(request, code):
     k_module.set_input_value("수정주가구분 ", 0)
     k_module.comm_rq_data("주식일봉차트조회요청", "opt10081", 0, k_module.S_SCREEN_NO)
     data = k_module.qs['OnReceiveTrData'].get()
-    comm_data_ex = k_module.get_comm_data_ex(data['sTrCode'], data['sRQName'])
-    print(comm_data_ex)
+    daily_stock_data = json.loads(k_module.get_comm_data_ex(data['sTrCode'], data['sRQName']))
+    daily_stock_data = DataFrame(daily_stock_data, dtype=int).iloc[:, 1:8]
+    daily_stock_data.columns = ['current_price', 'tr_qty', 'tr_volume', 'date', 'start', 'high', 'close']
+    daily_stock_data = daily_stock_data.set_index('date')
+
     return render(request, 'kiwoom/chart.html', {
-        'login_state': k_module.get_connect_state()
+        'login_state': k_module.get_connect_state(),
+        'daily_stock_data': daily_stock_data.to_csv(line_terminator='\\n')
     })

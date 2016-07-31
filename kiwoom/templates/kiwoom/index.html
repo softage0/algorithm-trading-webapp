@@ -3,6 +3,8 @@
 {% block head %}
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'kiwoom/styles.css' %}" />
+    {% block style %}
+    {% endblock %}
 {% endblock %}
 
 {% block body %}
@@ -11,4 +13,6 @@
         {% block content %}
         {% endblock %}
     </div>
+    {% block script %}
+    {% endblock %}
 {% endblock %}

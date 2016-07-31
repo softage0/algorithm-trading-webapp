@@ -256,8 +256,20 @@ class Kiwoom():
     def get_output_value(self):
         pass
 
-    def get_comm_data(self):
-        pass
+    def get_comm_data(self, strTrCode, strRecordName, nIndex, strItemName):
+        """
+        수신 데이터를 반환한다.
+
+        :param strTrCode: Tran 코드
+        :param strRecordName: 레코드명
+        :param nIndex: 복수데이터 인덱스
+        :param strItemName: 아이템명
+        Ex)현재가출력 - openApi.GetCommData(“OPT00001”, “주식기본정보”, 0, “현재가”);
+
+        :return: 수신 데이터
+        """
+        return self.ocx.dynamicCall("GetCommData(QString, QString, int, QString)",
+                                    strTrCode, strRecordName, nIndex, strItemName)
 
     def get_comm_real_data(self, strRealType, nFid):
         """
