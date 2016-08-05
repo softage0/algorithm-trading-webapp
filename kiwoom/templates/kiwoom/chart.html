@@ -22,11 +22,20 @@ body {
   stroke: steelblue;
   stroke-width: 1.5px;
 }
+
+.green-line {
+  stroke: green;
+}
+
+svg text {
+  fill: #000;
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="chart"></div>
+<div class="close-price"></div>
+<div class="volume"></div>
 {% endblock %}
 
 {% block script %}
@@ -42,17 +51,31 @@ var parseDate = d3.timeParse("%Y%m%d");
 var x = d3.scaleTime()
     .range([0, width]);
 
-var y = d3.scaleLinear()
+var y_close = d3.scaleLinear()
+    .range([height, 0]);
+
+var y_volume = d3.scaleLinear()
     .range([height, 0]);
 
 var xAxis = d3.axisBottom(x);
-var yAxis = d3.axisLeft(y);
+var yAxis_close = d3.axisLeft(y_close);
+var yAxis_volume = d3.axisLeft(y_volume);
 
-var line = d3.line()
+var line_close = d3.line()
     .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.close); });
+    .y(function(d) { return y_close(d.close); });
 
-var svg = d3.select(".chart").append("svg")
+var line_volume = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y_volume(d.tr_volume); });
+
+var close_price = d3.select(".close-price").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var volume = d3.select(".volume").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -61,31 +84,53 @@ var svg = d3.select(".chart").append("svg")
 data = d3.dsvFormat(",").parse("{{daily_stock_data}}", function(d, i) {
   return {
     date: parseDate(d.date),
+    tr_volume: +d.tr_volume,
     close: +d.close
   };
 });
 
 x.domain(d3.extent(data, function(d) { return d.date; }));
-y.domain(d3.extent(data, function(d) { return d.close; }));
+y_close.domain(d3.extent(data, function(d) { return d.close; }));
+y_volume.domain(d3.extent(data, function(d) { return d.tr_volume; }));
 
-svg.append("g")
+close_price.append("g")
   .attr("class", "x axis")
   .attr("transform", "translate(0," + height + ")")
   .call(xAxis);
 
-svg.append("g")
+close_price.append("g")
   .attr("class", "y axis")
-  .call(yAxis)
+  .call(yAxis_close)
 .append("text")
-  .attr("transform", "rotate(-90)")
   .attr("y", 6)
   .attr("dy", ".71em")
   .style("text-anchor", "end")
-  .text("Price ($)");
+  .attr("transform", "translate(100, 0)")
+  .text("Close Price (KRW)");
 
-svg.append("path")
+close_price.append("path")
   .datum(data)
   .attr("class", "line")
-  .attr("d", line);
+  .attr("d", line_close);
+
+volume.append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(xAxis);
+
+volume.append("g")
+  .attr("class", "y axis")
+  .call(yAxis_volume)
+.append("text")
+  .attr("y", 6)
+  .attr("dy", ".71em")
+  .style("text-anchor", "end")
+  .attr("transform", "translate(100, 0)")
+  .text("Volume (KRW)");
+
+volume.append("path")
+  .datum(data)
+  .attr("class", "line green-line")
+  .attr("d", line_volume);
 </script>
 {% endblock %}
