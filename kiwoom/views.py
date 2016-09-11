@@ -59,20 +59,7 @@ def stock_detail_list(request, market_type):
     })
 
 
-def basic_info(request, code):
-    k_module.set_input_value('종목코드', code)
-    k_module.comm_rq_data("주식기본정보", "opt10001", 0, k_module.S_SCREEN_NO)
-    tr_data = k_module.qs['OnReceiveTrData'].get()
-    return render(request, 'kiwoom/basic_info.html', {
-        'login_state': k_module.get_connect_state(),
-        'name': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "종목명"),
-        'quantity': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "거래량"),
-        'current_price': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "현재가"),
-        'total_price': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "시가총액")
-    })
-
-
-def chart(request, code):
+def details(request, code):
     k_module.set_input_value("종목코드", code)
     k_module.set_input_value("기준일자", datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d"))
     k_module.set_input_value("수정주가구분 ", 0)
@@ -83,7 +70,15 @@ def chart(request, code):
     daily_stock_data.columns = ['current_price', 'tr_qty', 'tr_volume', 'date', 'start', 'high', 'close']
     daily_stock_data = daily_stock_data.set_index('date')
 
-    return render(request, 'kiwoom/chart.html', {
+    k_module.set_input_value('종목코드', code)
+    k_module.comm_rq_data("주식기본정보", "opt10001", 0, k_module.S_SCREEN_NO)
+    tr_data = k_module.qs['OnReceiveTrData'].get()
+
+    return render(request, 'kiwoom/details.html', {
         'login_state': k_module.get_connect_state(),
+        'name': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "종목명"),
+        'quantity': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "거래량"),
+        'current_price': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "현재가"),
+        'total_price': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "시가총액"),
         'daily_stock_data': daily_stock_data.to_csv(line_terminator='\\n')
     })

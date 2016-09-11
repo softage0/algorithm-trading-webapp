@@ -1,47 +1,40 @@
 {% extends "kiwoom/index.html" %}
 
 {% block style %}
-<style>
-body {
-  font: 10px sans-serif;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.x.axis path {
-  display: none;
-}
-
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-
-.green-line {
-  stroke: green;
-}
-
-svg text {
-  fill: #000;
-}
-</style>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'kiwoom/chart.css' %}" />
 {% endblock %}
 
 {% block content %}
-<div class="close-price"></div>
-<div class="volume"></div>
+    <table class="table table-striped table-hover">
+        <tr>
+            <td>Name</td>
+            <td>{{ name }}</td>
+        </tr>
+        <tr>
+            <td>Quantity</td>
+            <td>{{ quantity }}</td>
+        </tr>
+        <tr>
+            <td>Current Price</td>
+            <td>{{ current_price }}</td>
+        </tr>
+        <tr>
+            <td>Current Total Price</td>
+            <td>{{ total_price }}</td>
+        </tr>
+    </table>
+    <div class="chart">
+        <div class="close-price"></div>
+        <div class="volume"></div>
+    </div>
 {% endblock %}
 
 {% block script %}
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
 <script>
+// chart
 var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -81,7 +74,7 @@ var volume = d3.select(".volume").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-data = d3.dsvFormat(",").parse("{{daily_stock_data}}", function(d, i) {
+var data = d3.dsvFormat(",").parse("{{daily_stock_data}}", function(d, i) {
   return {
     date: parseDate(d.date),
     tr_volume: +d.tr_volume,

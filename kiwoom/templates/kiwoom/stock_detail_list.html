@@ -7,8 +7,7 @@
     <tr>
         <td>Code</td>
         <td>Name</td>
-        <td>Basic Info</td>
-        <td>Chart</td>
+        <td>Details</td>
     </tr>
     </thead>
     <tbody>
@@ -16,8 +15,7 @@
     <tr>
         <td>{{code}}</td>
         <td>{{code|get_master_code_name}}</td>
-        <td><a href="{% url 'kiwoom:basic_info' code %}">Basic Info</a></td>
-        <td><a href="{% url 'kiwoom:chart' code %}">Chart</a></td>
+        <td><a href="{% url 'kiwoom:details' code %}">Details</a></td>
     </tr>
     {% endfor %}
     </tbody>
