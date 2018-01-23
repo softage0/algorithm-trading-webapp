@@ -82,3 +82,18 @@ def details(request, code):
         'total_price': k_module.comm_get_data(tr_data['sTrCode'], "", tr_data['sRQName'], 0, "시가총액"),
         'daily_stock_data': daily_stock_data.to_csv(line_terminator='\\n')
     })
+
+
+def manual_order(request, code):
+    if request.method == 'GET':
+        return render(request, 'kiwoom/manual_order.html', {
+            'login_state': k_module.get_connect_state(),
+            'accounts': k_module.get_login_info("ACCNO").strip(';').split(';'),
+            'order_types': k_module.ORDER_TYPE,
+            'hoga': k_module.HOGA,
+            'code': code
+        })
+    elif request.method == 'POST':
+        query = request.POST
+        k_module.send_order()
+        return HttpResponseRedirect(reverse('kiwoom:account_info'))

@@ -8,6 +8,7 @@
         <td>Code</td>
         <td>Name</td>
         <td>Details</td>
+        <td>Manual Order</td>
     </tr>
     </thead>
     <tbody>
@@ -16,6 +17,7 @@
         <td>{{code}}</td>
         <td>{{code|get_master_code_name}}</td>
         <td><a href="{% url 'kiwoom:details' code %}">Details</a></td>
+        <td><a href="{% url 'kiwoom:manual_order' code %}">Manual Order</a></td>
     </tr>
     {% endfor %}
     </tbody>

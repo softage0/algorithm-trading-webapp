@@ -24,6 +24,16 @@ class Kiwoom():
             10: '코스닥',
             30: '제3시장'
         }
+        self.ORDER_TYPE = {
+            1: '신규매수',
+            2: '신규매도',
+            3: '매수취소',
+            4: '매도취소'
+        }
+        self.HOGA = {
+            '00': '지정가',
+            '03': '시장가'
+        }
 
         self.q = k_queue
         self.qs = {
@@ -482,6 +492,13 @@ class Kiwoom():
             "sFidList": sFidList
         })
         print("OnReceiveChejanData received")
+
+        # Todo: API request implementation
+        print("sGubun: ", sGubun)
+        print(self.get_chejan_data(9203))   # 주문번호
+        print(self.get_chejan_data(302))    # 종목명
+        print(self.get_chejan_data(900))    # 주문수량
+        print(self.get_chejan_data(901))    # 주문가격
 
     def OnEventConnect(self, nErrCode):
         """

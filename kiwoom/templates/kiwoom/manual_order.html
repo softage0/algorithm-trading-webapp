@@ -1,0 +1,67 @@
+{% extends "kiwoom/index.html" %}
+{% load kiwoom_extras %}
+
+{% block content %}
+    <form class="form-horizontal" action="{% url 'kiwoom:manual_order' code %}" method="post">
+    {% csrf_token %}
+        <fieldset>
+            <legend>Manual Order</legend>
+            <div class="form-group">
+                <label for="account" class="col-lg-2 control-label">Select Account</label>
+                <div class="col-lg-10">
+                    <select class="form-control" id="account" name="account">
+                        {% for account in accounts %}
+                            <option>{{ account }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="orderType" class="col-lg-2 control-label">Select Order Type</label>
+                <div class="col-lg-10">
+                    <select class="form-control" id="orderType" name="orderType">
+                        {% for type_key, type_name in order_types.items %}
+                            <option value="{{ type_key }}">{{ type_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="stockCode" class="col-lg-2 control-label">Stock Code</label>
+                <div class="col-lg-10">
+                    <input class="form-control" id="stockCode" name="stockCode" value="{{ code }}" placeholder="000000">
+                    <br>
+                    <input class="form-control" id="stockName" name="stockName" value="{{ code|get_master_code_name }}" title="stockName" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="priceType" class="col-lg-2 control-label">Select Price Type</label>
+                <div class="col-lg-10">
+                    <select class="form-control" id="priceType" name="priceType">
+                        {% for type_key, type_name in hoga.items %}
+                            <option value="{{ type_key }}">{{ type_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="quantity" class="col-lg-2 control-label">Quantity</label>
+                <div class="col-lg-10">
+                    <input type="number" class="form-control" id="quantity" name="quantity" value="{{ quantity }}" placeholder="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="price" class="col-lg-2 control-label">Price</label>
+                <div class="col-lg-10">
+                    <input type="number" class="form-control" id="price" name="price" value="{{ price }}" placeholder="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                    <button type="reset" class="btn btn-default">Cancel</button>
+                    <button class="btn btn-primary">Order</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}
