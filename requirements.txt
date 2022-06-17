@@ -1,5 +1,5 @@
 Django==2.2.24
-numpy==1.13.1
+numpy==1.21.0
 pandas==0.20.3
 PyQt5==5.9
 python-dateutil==2.6.1
