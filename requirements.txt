@@ -1,4 +1,4 @@
-Django==2.2.24
+Django==3.2.24
 numpy==1.13.1
 pandas==0.20.3
 PyQt5==5.9
